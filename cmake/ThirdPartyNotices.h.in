@@ -1,0 +1,5 @@
+#pragma once
+
+namespace TinyEngine {
+inline constexpr char ThirdPartyNotices[] = R"tinyengine(@TINYENGINE_THIRD_PARTY_NOTICES@)tinyengine";
+}

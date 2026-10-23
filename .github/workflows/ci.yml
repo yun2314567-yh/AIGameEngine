@@ -1,0 +1,83 @@
+name: TinyEngine CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14, windows-2022]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DTINYENGINE_BUILD_TESTS=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+  integrations:
+    name: Integrations / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14, windows-2022]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: >-
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          -DTINYENGINE_FETCH_DEPENDENCIES=ON -DTINYENGINE_ENABLE_LUA=ON
+          -DTINYENGINE_ENABLE_MINIAUDIO=ON -DTINYENGINE_ENABLE_BULLET=ON
+          -DTINYENGINE_ENABLE_CGLTF=ON -DTINYENGINE_ENABLE_GLM=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+  vulkan-linux:
+    name: Vulkan / Linux lavapipe
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install loader, software driver and window dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvulkan-dev glslc mesa-vulkan-drivers vulkan-validationlayers xvfb libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+      - name: Fetch pinned Vulkan headers
+        run: |
+          mkdir -p build-dependencies
+          curl --fail --location --retry 3 https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.4.352.tar.gz -o build-dependencies/vulkan-headers.tar.gz
+          tar -xzf build-dependencies/vulkan-headers.tar.gz -C build-dependencies
+      - name: Configure all integrations
+        run: >-
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          -DVulkan_INCLUDE_DIR=${{ github.workspace }}/build-dependencies/Vulkan-Headers-1.4.352/include
+          -DGLFW_BUILD_WAYLAND=OFF
+          -DTINYENGINE_FETCH_DEPENDENCIES=ON -DTINYENGINE_ENABLE_VULKAN=ON
+          -DTINYENGINE_ENABLE_GLFW=ON -DTINYENGINE_ENABLE_GLM=ON
+          -DTINYENGINE_ENABLE_LUA=ON -DTINYENGINE_ENABLE_MINIAUDIO=ON
+          -DTINYENGINE_ENABLE_BULLET=ON -DTINYENGINE_ENABLE_CGLTF=ON
+          -DTINYENGINE_ENABLE_EDITOR_UI=ON -DTINYENGINE_RUN_GPU_TESTS=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+      - name: Test with a virtual display
+        run: xvfb-run -a ctest --test-dir build -C Release --output-on-failure
+      - name: Preserve test logs and render captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulkan-linux-validation
+          path: |
+            build/Testing/Temporary/
+            build/gpu-*.ppm

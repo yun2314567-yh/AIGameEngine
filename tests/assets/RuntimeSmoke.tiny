@@ -1,0 +1,3 @@
+TINYENGINE_SCENE 1
+"Runtime Smoke"
+ENTITY 1 "Camera" T 0 0 0 0 0 0 1 1 1 1 C 60 0.01 1000 0

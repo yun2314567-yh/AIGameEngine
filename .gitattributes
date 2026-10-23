@@ -1,0 +1,14 @@
+* text=auto
+*.cpp text eol=lf
+*.h text eol=lf
+*.hlsl text eol=lf
+*.hlsli text eol=lf
+*.cmake text eol=lf
+CMakeLists.txt text eol=lf
+*.hdr -text
+*.wav -text
+*.png -text
+*.jpg -text
+*.glb -text
+*.bin -text
+*.spv -text

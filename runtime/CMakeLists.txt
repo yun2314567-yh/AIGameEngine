@@ -1,0 +1,5 @@
+add_executable(TinyEngineRuntime src/RuntimeMain.cpp)
+target_link_libraries(TinyEngineRuntime PRIVATE TinyEngine)
+target_compile_features(TinyEngineRuntime PRIVATE cxx_std_20)
+target_compile_definitions(TinyEngineRuntime PRIVATE TINYENGINE_RUNTIME_BUILD=1)
+install(TARGETS TinyEngineRuntime RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

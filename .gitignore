@@ -1,0 +1,15 @@
+/build*/
+/out/
+/.vs/
+/.idea/
+*.user
+*.suo
+*.vcxproj*
+compile_commands.json
+*.obj
+*.pdb
+*.dll
+*.so
+*.dylib
+*.exe
+*.log
