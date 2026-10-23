@@ -12,6 +12,7 @@
 #define NOMINMAX
 #endif
 #define GLFW_INCLUDE_VULKAN
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <nvrhi/vulkan.h>
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1

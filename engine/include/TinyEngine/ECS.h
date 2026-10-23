@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
@@ -60,7 +61,15 @@ public:
             throw std::invalid_argument("Cannot add a component to an invalid entity");
         }
         auto& storage = getStorage<Component>().data;
-        auto [iterator, inserted] = storage.emplace(entity, Component(std::forward<Args>(args)...));
+        auto component = [&]() {
+            // Some C++20 compilers do not support parenthesized aggregate initialization.
+            if constexpr (std::is_aggregate_v<Component>) {
+                return Component{std::forward<Args>(args)...};
+            } else {
+                return Component(std::forward<Args>(args)...);
+            }
+        }();
+        auto [iterator, inserted] = storage.emplace(entity, std::move(component));
         return iterator->second;
     }
 

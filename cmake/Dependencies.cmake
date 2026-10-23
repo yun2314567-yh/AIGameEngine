@@ -199,6 +199,7 @@ function(tinyengine_configure_dependencies)
             add_library(tinyengine_imgui_backends STATIC
                 "${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp"
                 "${imgui_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp")
+            target_compile_definitions(tinyengine_imgui_backends PRIVATE GLFW_INCLUDE_NONE)
             target_link_libraries(tinyengine_imgui_backends PUBLIC imgui::imgui glfw Vulkan::Vulkan)
             target_include_directories(tinyengine_imgui_backends PUBLIC "$<BUILD_INTERFACE:${imgui_SOURCE_DIR}>")
             add_library(imgui::backends ALIAS tinyengine_imgui_backends)

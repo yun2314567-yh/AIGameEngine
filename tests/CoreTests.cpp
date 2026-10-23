@@ -7,6 +7,7 @@
 void runRendererTests();
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 void runEngineIntegrationTests();
 
@@ -86,6 +87,12 @@ void testRegistry() {
     registry.emplace<int>(first, 42);
     CHECK(registry.has<int>(first));
     CHECK(registry.get<int>(first) == 42);
+    auto& script = registry.emplace<TinyEngine::ScriptComponent>(first, std::string("actor.lua"));
+    CHECK(script.Module == "actor.lua");
+    CHECK(script.Enabled);
+    auto& values = registry.emplace<std::vector<int>>(first, 3, 7);
+    CHECK(values.size() == 3);
+    CHECK(values.front() == 7 && values.back() == 7);
     CHECK(registry.remove<int>(first));
     CHECK(!registry.remove<int>(first));
     registry.emplace<int>(second, 7);
