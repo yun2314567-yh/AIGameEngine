@@ -162,9 +162,14 @@ function(tinyengine_configure_dependencies)
             if(TARGET nvrhi_vk)
                 set_property(TARGET nvrhi_vk PROPERTY NO_SYSTEM_FROM_IMPORTED TRUE)
                 target_include_directories(nvrhi_vk BEFORE PRIVATE ${Vulkan_INCLUDE_DIRS})
+                # The static backend calls core symbols. Model that dependency
+                # so Unix linkers and installed consumers receive both archives
+                # in dependency order.
+                target_link_libraries(nvrhi_vk PUBLIC nvrhi)
                 add_library(NVRHI::Vulkan ALIAS nvrhi_vk)
                 tinyengine_register_dependency(nvrhi_vk)
             elseif(TARGET nvrhi_vulkan)
+                target_link_libraries(nvrhi_vulkan PUBLIC nvrhi)
                 add_library(NVRHI::Vulkan ALIAS nvrhi_vulkan)
                 tinyengine_register_dependency(nvrhi_vulkan)
             endif()

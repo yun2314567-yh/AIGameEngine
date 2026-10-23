@@ -75,7 +75,7 @@ if(TINYENGINE_ENABLE_VULKAN AND TARGET Vulkan::Vulkan AND TARGET NVRHI::Core AND
     target_include_directories(TinyEngine BEFORE PRIVATE ${Vulkan_INCLUDE_DIRS})
     target_compile_definitions(TinyEngine PRIVATE TINYENGINE_WITH_VULKAN_NVRHI=1
         TINYENGINE_BUILD_SHADER_DIRECTORY="${PROJECT_BINARY_DIR}/shaders")
-    target_link_libraries(TinyEngine PRIVATE Vulkan::Vulkan NVRHI::Core NVRHI::Vulkan)
+    target_link_libraries(TinyEngine PRIVATE NVRHI::Vulkan NVRHI::Core Vulkan::Vulkan)
     if(TARGET tinyengine_stb)
         target_link_libraries(TinyEngine PRIVATE "$<BUILD_INTERFACE:tinyengine_stb>")
     endif()
