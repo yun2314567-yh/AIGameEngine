@@ -57,6 +57,8 @@ a display and Vulkan device. These compare rendered images, verify compute
 buffer results and launch the graphical editor for three frames.
 
 Windows production integrations and GPU rendering have been exercised locally.
+CPU and integration CI pass on Windows, macOS and Ubuntu; the complete Vulkan
+configuration also passes on Ubuntu with Mesa lavapipe and a virtual display.
 See [requirements and validation](docs/REQUIREMENTS.md) for platform coverage
 and current limits. CPU tests alone do not establish driver compatibility or
 release readiness.
